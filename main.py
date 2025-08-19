@@ -1,25 +1,23 @@
 
-from fastapi import Depends, FastAPI, HTTPException, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from fastapi import FastAPI
 
+from database import create_db_and_tables
 
-sqlite_file_name = "smart-fit.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
-
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-
-
-def get_session():
-    with Session(engine) as session:
-        yield session
-
+from routes.users import router as user_router
+from routes.workout import router as worker_router
+from routes.nutrition import router as nutrition_router
+from routes.progress import router as progress_router
 
 app = FastAPI()
+
+app.include_router(user_router)
+app.include_router(worker_router)
+app.include_router(nutrition_router)
+app.include_router(progress_router)
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
 
 @app.get("/")
 async def health():

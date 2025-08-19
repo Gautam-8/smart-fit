@@ -1,6 +1,5 @@
 # Users: id, username, email, password, age, weight, height, goals
 
-from tkinter.tix import Tree
 from sqlalchemy import table
 from sqlmodel import Field, SQLModel
 
